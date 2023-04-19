@@ -1,0 +1,349 @@
+CREATE DATABASE IF NOT EXISTS db_faculdade
+COLLATE utf8mb4_general_ci
+CHARSET utf8mb4;
+
+USE db_faculdade;
+
+CREATE TABLE IF NOT EXISTS tb_curso (
+    id_curso INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_curso VARCHAR(20) NOT NULL,
+    carga_horaria INTEGER,
+    sigla VARCHAR(6),
+    fk_id_aluno INTEGER,
+    fk_id_turma INTEGER,
+    fk_id_departamento INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_historico (
+    id_historico INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    frequencia INTEGER,
+    turno VARCHAR(10) NOT NULL,
+    nota FLOAT,
+    semestre INTEGER NOT NULL,
+    fk_RA INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_departamento (
+    id_departamento INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_departamento VARCHAR(20) NOT NULL,
+    nome_resposavel VARCHAR(35) NOT NULL,
+    fk_id_curso INTEGER,
+    fk_id_professor INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_disciplina (
+    id_disciplina INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_disciplina VARCHAR(20) NOT NULL,
+    horas INTEGER NOT NULL,
+    creditos INTEGER NOT NULL,
+    qtd_alunos INTEGER NOT NULL,
+    descrição VARCHAR(255),
+    fk_id_departamento INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_turma (
+    id_turma INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    turno VARCHAR(20) NOT NULL,
+    qtd_alunos INTEGER NOT NULL,
+    semestre INTEGER NOT NULL,
+    fk_id_curso INTEGER,
+    fk_RA INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_disciplina_historico (
+    id_disciplina_historico INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    fk_id_disciplina INTEGER,
+    fk_id_historico INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_disciplina_curso (
+    id_disciplina_curso INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    fk_id_curso INTEGER,
+    fk_id_disciplina INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_disciplina_aluno (
+    id_disciplina_aluno INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    fk_id_disciplina INTEGER,
+    fk_RA INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_disciplina_professor (
+    id_disciplina_professor INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    fk_id_disciplina INTEGER,
+    fk_id_professor INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_disciplina_requisitada (
+    id_disciplina_requisitada INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    id_disciplina INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_professor (
+    id_professor INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_professor VARCHAR(20) NOT NULL,
+    sobrenome_professor VARCHAR(20) NOT NULL,
+    status_professor VARCHAR(10) NOT NULL,
+    especializacao VARCHAR(20) NOT NULL,
+    fk_id_departamento INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_endereco_professor (
+    id_endereco INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    endereco VARCHAR(50) NOT NULL,
+    numero INTEGER,
+    bairro VARCHAR(20),
+    cidade VARCHAR(20),
+    complemento VARCHAR(35),
+    cep VARCHAR(14) NOT NULL,
+    fk_id_logradouro INTEGER,
+    fk_id_professor INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_tipo_logradouro (
+    id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    descricao VARCHAR(255)
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_telefone_professor (
+    id_telefone_professor INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    telefone INTEGER,
+    fk_id_tipo_telefone INTEGER,
+    fk_id_professor INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_tipo_telefone (
+    id_tipo_telefone INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    descricao VARCHAR(50)
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_endereco_aluno (
+    id_endereco INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    endereco VARCHAR(255) NOT NULL,
+    numero INTEGER,
+    bairro VARCHAR(20),
+    cidade VARCHAR(20),
+    complemento VARCHAR(50),
+    cep VARCHAR(35) NOT NULL,
+    fk_id_logradouro INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_telefone_aluno (
+    id_telefone INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    telefone INTEGER,
+    fk_RA INTEGER,
+    fk_id_tipo_telefone INTEGER
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS tb_aluno (
+    RA INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(20) NOT NULL,
+    sobrenome VARCHAR(35) NOT NULL,
+    dt_nascimento DATE NOT NULL,
+    cpf CHAR(14),
+    rg CHAR(10),
+    telefone INTEGER,
+    email VARCHAR(35),
+    whatsapp INTEGER,
+    status_aluno VARCHAR(10),
+    sexo VARCHAR(10),
+    pai VARCHAR(35) NOT NULL,
+    mae VARCHAR(35) NOT NULL,
+    fk_id_endereco INTEGER,
+    fk_id_historico INTEGER,
+    fk_id_turma INTEGER
+)AUTO_INCREMENT=1;
+ 
+ALTER TABLE tb_curso ADD CONSTRAINT FK_curso_2
+    FOREIGN KEY (fk_id_aluno)
+    REFERENCES tb_aluno (RA);
+ 
+ALTER TABLE tb_curso ADD CONSTRAINT FK_curso_3
+    FOREIGN KEY (fk_id_turma)
+    REFERENCES tb_turma (id_turma);
+ 
+ALTER TABLE tb_curso ADD CONSTRAINT FK_curso_4
+    FOREIGN KEY (fk_id_departamento)
+    REFERENCES tb_departamento (id_departamento);
+ 
+ALTER TABLE tb_historico ADD CONSTRAINT FK_historico_2
+    FOREIGN KEY (fk_RA)
+    REFERENCES tb_aluno (RA);
+ 
+ALTER TABLE tb_departamento ADD CONSTRAINT FK_departamento_2
+    FOREIGN KEY (fk_id_curso)
+    REFERENCES tb_curso (id_curso);
+ 
+ALTER TABLE tb_departamento ADD CONSTRAINT FK_departamento_3
+    FOREIGN KEY (fk_id_professor)
+    REFERENCES tb_professor (id_professor);
+ 
+ALTER TABLE tb_disciplina ADD CONSTRAINT FK_disciplina_2
+    FOREIGN KEY (fk_id_departamento)
+    REFERENCES tb_departamento (id_departamento);
+ 
+ALTER TABLE tb_turma ADD CONSTRAINT FK_turma_2
+    FOREIGN KEY (fk_id_curso)
+    REFERENCES tb_curso (id_curso);
+ 
+ALTER TABLE tb_turma ADD CONSTRAINT FK_turma_3
+    FOREIGN KEY (fk_RA)
+    REFERENCES tb_aluno (RA);
+ 
+ALTER TABLE tb_disciplina_historico ADD CONSTRAINT FK_disciplina_historico_2
+    FOREIGN KEY (fk_id_historico)
+    REFERENCES tb_historico (id_historico);
+ 
+ALTER TABLE tb_disciplina_historico ADD CONSTRAINT FK_disciplina_historico_3
+    FOREIGN KEY (fk_id_disciplina)
+    REFERENCES tb_disciplina (id_disciplina);
+ 
+ALTER TABLE tb_disciplina_curso ADD CONSTRAINT FK_disciplina_curso_2
+    FOREIGN KEY (fk_id_disciplina)
+    REFERENCES tb_disciplina (id_disciplina);
+ 
+ALTER TABLE tb_disciplina_curso ADD CONSTRAINT FK_disciplina_curso_3
+    FOREIGN KEY (fk_id_curso)
+    REFERENCES tb_curso (id_curso);
+ 
+ALTER TABLE tb_disciplina_aluno ADD CONSTRAINT FK_disciplina_aluno_2
+    FOREIGN KEY (fk_RA)
+    REFERENCES tb_aluno (RA);
+ 
+ALTER TABLE tb_disciplina_aluno ADD CONSTRAINT FK_disciplina_aluno_3
+    FOREIGN KEY (fk_id_disciplina)
+    REFERENCES tb_disciplina (id_disciplina);
+ 
+ALTER TABLE tb_disciplina_professor ADD CONSTRAINT FK_disciplina_professor_2
+    FOREIGN KEY (fk_id_disciplina)
+    REFERENCES tb_disciplina (id_disciplina);
+ 
+ALTER TABLE tb_disciplina_professor ADD CONSTRAINT FK_disciplina_professor_3
+    FOREIGN KEY (fk_id_professor)
+    REFERENCES tb_professor (id_professor);
+ 
+ALTER TABLE tb_disciplina_requisitada ADD CONSTRAINT FK_disciplina_requisitada_2
+    FOREIGN KEY (id_disciplina_requisitada)
+    REFERENCES tb_disciplina (id_disciplina);
+ 
+ALTER TABLE tb_professor ADD CONSTRAINT FK_professor_2
+    FOREIGN KEY (fk_id_departamento)
+    REFERENCES tb_departamento (id_departamento);
+ 
+ALTER TABLE tb_endereco_professor ADD CONSTRAINT FK_endereco_professor_2
+    FOREIGN KEY (fk_id_logradouro)
+    REFERENCES tb_tipo_logradouro (id);
+ 
+ALTER TABLE tb_endereco_professor ADD CONSTRAINT FK_endereco_professor_3
+    FOREIGN KEY (fk_id_professor)
+    REFERENCES tb_professor (id_professor);
+ 
+ALTER TABLE tb_telefone_professor ADD CONSTRAINT FK_telefone_professor_2
+    FOREIGN KEY (fk_id_tipo_telefone)
+    REFERENCES tb_tipo_telefone (id_tipo_telefone);
+ 
+ALTER TABLE tb_telefone_professor ADD CONSTRAINT FK_telefone_professor_3
+    FOREIGN KEY (fk_id_professor)
+    REFERENCES tb_professor (id_professor);
+ 
+ALTER TABLE tb_endereco_aluno ADD CONSTRAINT FK_endereco_aluno_2
+    FOREIGN KEY (fk_id_logradouro)
+    REFERENCES tb_tipo_logradouro (id);
+ 
+ALTER TABLE tb_telefone_aluno ADD CONSTRAINT FK_telefone_aluno_2
+    FOREIGN KEY (fk_RA)
+    REFERENCES tb_aluno (RA);
+ 
+ALTER TABLE tb_telefone_aluno ADD CONSTRAINT FK_telefone_aluno_3
+    FOREIGN KEY (fk_id_tipo_telefone)
+    REFERENCES tb_tipo_telefone (id_tipo_telefone);
+ 
+ALTER TABLE tb_aluno ADD CONSTRAINT FK_aluno_2
+    FOREIGN KEY (fk_id_endereco)
+    REFERENCES tb_endereco_aluno (id_endereco);
+ 
+ALTER TABLE tb_aluno ADD CONSTRAINT FK_aluno_3
+    FOREIGN KEY (fk_id_historico)
+    REFERENCES tb_historico (id_historico);
+ 
+ALTER TABLE tb_aluno ADD CONSTRAINT FK_aluno_4
+    FOREIGN KEY (fk_id_turma)
+    REFERENCES tb_turma (id_turma);
+INSERT INTO `tb_aluno` (`nome`,`sobrenome`,`dt_nascimento`,`telefone`,`pai`,`mae`)
+VALUES
+  ("Faith","Jacobson","2006-05-07","8461647","Hunter","Donna"),
+  ("Demetrius","Gamble","2001-04-21","4007833","Blake","Summer"),
+  ("Lamar","Dorsey","2021-04-07","2568613","Timothy","Wynter"),
+  ("Christen","Yang","2004-05-08","5433262","Amery","Chelsea"),
+  ("David","Wallace","2015-02-22","3817760","Rafael","Macy"),
+  ("Scarlett","Sharpe","2001-02-02","7361115","Dane","Charlotte"),
+  ("Roary","Blackburn","2002-05-25","4661861","Abdul","Ifeoma"),
+  ("Selma","Tillman","2022-05-28","3407506","Jarrod","Juliet"),
+  ("Gisela","Randolph","2003-02-04","1833858","Ignatius","Jemima"),
+  ("Ila","Kinney","2007-05-13","2073224","Reuben","Jenna");
+INSERT INTO `tb_aluno` (`nome`,`sobrenome`,`dt_nascimento`,`telefone`,`pai`,`mae`)
+VALUES
+  ("Nasim","Randall","2020-12-09","7257734","Ezra","Brooke"),
+  ("Melyssa","Coffey","2003-11-06","2033765","Logan","Erica"),
+  ("Adam","Chan","2016-08-06","7320973","Andrew","Ayanna"),
+  ("Constance","Le","2015-09-25","2137901","Zane","Alika"),
+  ("Julie","Barber","2014-10-15","8199001","Brady","Daphne"),
+  ("Lars","Mcneil","2011-09-30","9484626","Colin","Celeste"),
+  ("Chastity","Mcmahon","2016-06-15","7625444","Fulton","Gail"),
+  ("Ishmael","Oneal","2011-07-28","4766586","Price","Kay"),
+  ("Amaya","Ward","2022-04-26","3870363","Kirk","Yolanda"),
+  ("Kyla","Baxter","2011-01-26","2265624","Alfonso","Nayda");
+INSERT INTO `tb_aluno` (`nome`,`sobrenome`,`dt_nascimento`,`telefone`,`pai`,`mae`)
+VALUES
+  ("Hakeem","Taylor","2015-01-22","1714126","Neville","Cheyenne"),
+  ("Melodie","Oneil","2008-01-09","4145155","Paki","Jenna"),
+  ("Yoshio","Parker","2023-06-11","3765773","Brenden","Barbara"),
+  ("Thane","Nielsen","2016-05-14","5423212","Samuel","Cecilia"),
+  ("Tad","Bird","2016-04-19","3780900","Caesar","Ursa"),
+  ("Hu","Conner","2002-04-17","5110176","Malachi","Beverly"),
+  ("Shana","Rosa","2002-09-12","7061388","Shad","Neve"),
+  ("Brian","Patterson","2011-07-16","6566920","Ishmael","Sage"),
+  ("Xandra","Dickson","2005-04-02","3652433","Aquila","Roanna"),
+  ("Castor","Whitehead","2022-03-20","6605365","Felix","Deanna");
+  
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Química', '3600', 'IQ');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Matemática', '3600', 'MAT');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Letras', '3600', 'LT');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Física', '3600', 'IF');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Biologia', '3600', 'IB');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Direito', '3600', 'ID');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Filosofia', '3600', 'FILO');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('História', '3600', 'HIS');
+INSERT INTO `db_faculdade`.`tb_curso` (`nome_curso`, `carga_horaria`, `sigla`) VALUES ('Geografia', '3600', 'GEO');
+
+INSERT INTO `db_faculdade`.`tb_departamento` (`nome_departamento`, `nome_resposavel`) VALUES ('Humanas', 'Jeferson Soares');
+INSERT INTO `db_faculdade`.`tb_departamento` (`nome_departamento`, `nome_resposavel`) VALUES ('Exatas', 'Laryssa Manoela');
+INSERT INTO `db_faculdade`.`tb_departamento` (`nome_departamento`, `nome_resposavel`) VALUES ('Saúde', 'Carlos Almeida');
+INSERT INTO `db_faculdade`.`tb_departamento` (`nome_departamento`, `nome_resposavel`) VALUES ('Educação', 'Leopoldina Carvalho');
+
+INSERT INTO `db_faculdade`.`tb_turma` (`turno`, `qtd_alunos`, `semestre`) VALUES ('verspertino', '28', '2');
+INSERT INTO `db_faculdade`.`tb_turma` (`turno`, `qtd_alunos`, `semestre`) VALUES ('noturno', '25', '1');
+INSERT INTO `db_faculdade`.`tb_turma` (`turno`, `qtd_alunos`, `semestre`) VALUES ('matutino', '30', '4');
+INSERT INTO `db_faculdade`.`tb_turma` (`turno`, `qtd_alunos`, `semestre`) VALUES ('matutino', '25', '3');
+INSERT INTO `db_faculdade`.`tb_turma` (`turno`, `qtd_alunos`, `semestre`) VALUES ('verpertino', '30', '1');
+INSERT INTO `db_faculdade`.`tb_turma` (`turno`, `qtd_alunos`, `semestre`) VALUES ('noturno', '15', '6');
+
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Amanda', 'Almeida', 'ativo', 'fisica', '2');
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Leonardo', 'DiCaprio', 'ativo', 'medicina', '3');
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Angelina', 'Jolie', 'inativo', 'letras', '4');
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Carlos', 'Joel', 'ativo', 'geografia', '1');
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Mirian', 'Fernandes', 'inativo', 'fisica', '2');
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Matheus', 'Miguel', 'ativo', 'enfermagem', '3');
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Jeane', 'dos Anjos', 'ativo', 'ingles', '4');
+INSERT INTO `db_faculdade`.`tb_professor` (`nome_professor`, `sobrenome_professor`, `status_professor`, `especializacao`, `fk_id_departamento`) VALUES ('Caio', 'Cardoso', 'ativo', 'filosofia', '1');
+
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('90', 'versp', '10.0', '1', '1');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('99', 'mat', '9.0', '2', '2');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('97', 'versp', '8.5', '2', '3');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('91', 'not', '8.16', '3', '4');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('89', 'mat', '9.0', '4', '5');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('85', 'versp', '7.5', '5', '6');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('99', 'mat', '6.5', '4', '7');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('100', 'not', '8.9', '6', '8');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('95', 'not', '5.0', '8', '9');
+INSERT INTO `db_faculdade`.`tb_historico` (`frequencia`, `turno`, `nota`, `semestre`, `fk_RA`) VALUES ('94', 'mat', '5.5', '2', '10');
